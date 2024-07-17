@@ -43,17 +43,20 @@ export const getRoles = async (userId: number) => {
 };
 
 export const getPermissions = async (roleId: number) => {
-  const permissions = await UserModel1.UserModel.getPermissionIds(roleId);
+  // console.log("roleId inside the service", roleId);
+  // const permissions = await UserModel1.UserModel.getPermissionIds(roleId);
+  // const permissionIds = permissions.map((id) => {
+  //   return id;
+  // });
+  // console.log("permissionIds", permissionIds);
+  // const permissionNames = await UserModel1.UserModel.getPermissionNames(
+  //   permissionIds
+  // );
+  // console.log("permission names", permissionNames);
+  // return permissionNames;
 
-  const permissionIds = permissions.map((id) => {
-    return id;
-  });
-  console.log("permissionIds", permissionIds);
-  const permissionNames = await UserModel1.UserModel.getPermissionNames(
-    permissionIds
-  );
-
-  return permissionNames;
+  const permissions = UserModel1.UserModel.getRolePermissions(roleId);
+  return permissions;
 };
 
 export const getUsers = () => {

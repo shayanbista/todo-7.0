@@ -31,10 +31,10 @@ export const login = async (body: Pick<User, "email" | "password">) => {
   });
 
   const permissions = await userService.getPermissions(roleId!);
+  console.log("permissions", permissions);
 
   if (!permissions) return null;
 
-  //TODO(set isValidPW)
   const isvalidPassword = await bcrypt.compare(
     body.password,
     existingUser.password
@@ -50,6 +50,8 @@ export const login = async (body: Pick<User, "email" | "password">) => {
     permissions: permissions,
     role: roleName,
   };
+
+  console.log("payload", payload);
 
   const s = config.jwt.secret!;
   const accessToken = sign(payload, s, {

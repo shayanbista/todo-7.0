@@ -43,15 +43,18 @@ export const authenticate = (
 export const authorize = (permission: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = req.user!;
+    console.log("user", user);
     if (!user) {
       return;
     }
 
-    const permissionLists: string[] = user.permissions.map(
-      (p: any) => p.permission
-    );
+    // const permissionLists: string[] = user.permissions.map(
+    //   (p: any) => p.permission
+    // );
 
-    const hasPermission = permissionLists.includes(permission);
+    // console.log("permissionlist", permissionLists);
+
+    const hasPermission = user.permissions.includes(permission);
 
     if (!hasPermission) {
       next(new UnauthenticatedError("Forbidden"));

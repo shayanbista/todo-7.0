@@ -27,6 +27,8 @@ export class UserModel extends BaseModel {
     return result;
   }
 
+  // static async setRole()
+
   // static async rolePermission(userId: number) {
   //   return await this.queryBuilder()
   //     .select("*")
@@ -85,6 +87,26 @@ export class UserModel extends BaseModel {
       .from("permissions")
       .whereIn("id", permissionIds);
 
+    console.log("result permission", result);
+
     return result;
+  }
+
+  static async getRolePermissions(roleId: number) {
+    const permissionsId = await this.queryBuilder()
+      .select("permission_id")
+      .table("role_permissions")
+      .where({ roleId: roleId });
+      
+    const permissions = await Promise.all(
+      permissionsId.map(async (permission) => {
+        const result = await this.queryBuilder()
+          .select("permission")
+          .table("permissions")
+          .where({ id: permission.permissionId });
+        return result[0].permission;
+      })
+    );
+    return permissions;
   }
 }
