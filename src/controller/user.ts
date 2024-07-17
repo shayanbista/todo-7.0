@@ -27,7 +27,8 @@ export const getUserById = async (
       return next(new BadRequestError("Invalid user ID"));
     }
 
-    const user = userService.getUserById(Number(id));
+    const user = await userService.getUserById(Number(id));
+    console.log("user", user);
 
     if (!user) {
       return next(new BadRequestError("User does not exist"));
@@ -68,9 +69,13 @@ export const updateUser = async (
   res.status(httpStatusCodes.OK).json({ message: user });
 };
 
-export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const id = parseInt(req.params.id);
-  const message = userService.deleteUser(id);
+  const message = await userService.deleteUser(id);
   console.log("messae", message);
   res.status(httpStatusCodes.OK).json({ message });
 };

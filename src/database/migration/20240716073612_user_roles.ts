@@ -17,14 +17,16 @@ export async function up(knex: Knex): Promise<void> {
       .unsigned()
       .notNullable()
       .references("id")
-      .inTable("users");
+      .inTable("users")
+      .onDelete("cascade");
 
     table
       .bigInteger("role_id")
       .unsigned()
       .notNullable()
       .references("id")
-      .inTable("roles");
+      .inTable("roles")
+      .onDelete("cascade");
     0;
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 

@@ -43,18 +43,6 @@ export const getRoles = async (userId: number) => {
 };
 
 export const getPermissions = async (roleId: number) => {
-  // console.log("roleId inside the service", roleId);
-  // const permissions = await UserModel1.UserModel.getPermissionIds(roleId);
-  // const permissionIds = permissions.map((id) => {
-  //   return id;
-  // });
-  // console.log("permissionIds", permissionIds);
-  // const permissionNames = await UserModel1.UserModel.getPermissionNames(
-  //   permissionIds
-  // );
-  // console.log("permission names", permissionNames);
-  // return permissionNames;
-
   const permissions = UserModel1.UserModel.getRolePermissions(roleId);
   return permissions;
 };
@@ -70,39 +58,24 @@ export const getUserByEmail = async (email: string) => {
   return await UserModel1.UserModel.getByEmail(email);
 };
 
-export const getUserById = (id: number) => {
-  const user = userModel.getUserById(id);
-  if (!user) return null;
+export const getUserById = async (id: number) => {
+  const user = UserModel1.UserModel.getById(id);
+
   return user;
 };
 
 export const updateUser = async (id: number, user: User) => {
-  let password: string;
+  const existingUser = await UserModel1.UserModel.getById(id);
+  if (!existingUser) return null;
 
-  // find the index of user
-  const usersIndex = userModel.findUserIndex(id);
-
-  if (usersIndex === -1) {
-    throw new BadRequestError("user not found");
-  }
-  const existingUser = userModel.getUserByIndexId(id);
-
-  // check the password from request
-  if (user.password) {
-    password = await bcrypt.hash(user.password, 10);
-  } else {
-    password = existingUser.password;
-  }
-  logger.info("password", password);
-  user.password = password;
-  userModel.updateUser(id, user, usersIndex);
-  return { message: "User updated" };
+  const updatedUser = await UserModel1.UserModel.update(id, user);
+  return updatedUser;
 };
 
-export const deleteUser = (id: number) => {
-  const userIndex = userModel.findUserIndex(id);
-  if (userIndex === -1) throw new BadRequestError("user not found");
-  userModel.deleteUser(userIndex);
+export const deleteUser = async (id: number) => {
+  const existingUser = await UserModel1.UserModel.getById(id);
+  if (!existingUser) return null;
   logger.info("User deleted");
-  return { message: "users deleted" };
+  const deletedUser = await UserModel1.UserModel.delete(id);
+  return true;
 };

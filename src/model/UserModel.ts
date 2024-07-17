@@ -27,28 +27,15 @@ export class UserModel extends BaseModel {
     return result;
   }
 
-  // static async setRole()
+  static async getById(id: number) {
+    const result = await this.queryBuilder()
+      .select("*")
+      .from("users")
+      .where("id", id)
+      .first();
+    return result;
+  }
 
-  // static async rolePermission(userId: number) {
-  //   return await this.queryBuilder()
-  //     .select("*")
-  //     .from("your_table_name")
-  //     .where("user_id", userId);
-  // }
-
-  // static async getRolesPermissions(userId: number) {
-  //   try {
-  //     const result = await this.queryBuilder()
-  //       .select("roles.id as role_id")
-  //       .from("userRoles")
-  //       .leftJoin("roles", "userRoles.role_id", "roles.id")
-  //       .where("userRoles.user_id", userId);
-  //     return result;
-  //   } catch (error) {
-  //     console.error("Error fetching roles and permissions:", error);
-  //     throw error;
-  //   }
-  // }
   static async getRoleId(userId: number) {
     try {
       const result = await this.queryBuilder()
@@ -97,7 +84,7 @@ export class UserModel extends BaseModel {
       .select("permission_id")
       .table("role_permissions")
       .where({ roleId: roleId });
-      
+
     const permissions = await Promise.all(
       permissionsId.map(async (permission) => {
         const result = await this.queryBuilder()
@@ -108,5 +95,31 @@ export class UserModel extends BaseModel {
       })
     );
     return permissions;
+  }
+
+  static async update(id: number, user: User) {
+    const updateUser: User = user;
+    if (user.name) updateUser.name = user.name;
+    if (user.email) updateUser.email = user.email;
+    if (user.password)
+      updateUser.password = await bcrypt.hash(user.password, 10);
+
+    if (Object.keys(updateUser).length === 0) {
+      throw new Error("No valid fields provided to update");
+    }
+
+    return await this.queryBuilder()
+      .update(updateUser)
+      .table("users")
+      .where({ id })
+      .returning("*");
+  }
+
+  static async delete(id: number) {
+    return await this.queryBuilder()
+      .delete()
+      .from("users")
+      .where({ id })
+      .returning("*");
   }
 }
