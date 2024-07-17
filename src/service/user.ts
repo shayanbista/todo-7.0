@@ -8,6 +8,7 @@ import { Roles } from "../constant/Roles";
 import loggerWithNameSpace from "../utils/logger";
 import { BadRequestError } from "../error/BadRequestError";
 import * as UserModel1 from "../model/UserModel";
+import { number } from "joi";
 
 const logger = loggerWithNameSpace("User Service");
 
@@ -20,13 +21,11 @@ export const createUser = async (user: User) => {
   }
 
   const userId = newUser[0].id;
+  const roleId = 1;
 
-  // const setRoleId = UserModel1.UserModel.setRole(userId);
-  console.log("newUser", newUser);
-  // const userId = newUser[
-  // const setRoleId = await UserModel1.UserModel.setRoleId(user);
-
-  return true;
+  const setRole = await UserModel1.UserModel.setRole(userId, roleId);
+  console.log("setRole", setRole);
+  return setRole;
 };
 
 export const getRoles = async (userId: number) => {

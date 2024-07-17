@@ -15,7 +15,8 @@ export const addTask = (req: Request, res: Response) => {
   const task = taskService.addTask(newTask, userId);
 
   logger.info("task add");
-  res.status(httpStatusCodes.CREATED).json({ message: "Succesfully added!" });
+  // res.status(httpStatusCodes.CREATED).json({ message: "Succesfully added!" });
+  res.status(httpStatusCodes.CREATED).json({ message: task });
 };
 
 export const getTasks = (req: Request, res: Response, next: NextFunction) => {

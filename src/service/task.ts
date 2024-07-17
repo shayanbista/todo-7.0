@@ -3,12 +3,16 @@ import { Todo } from "../interface/task";
 import * as taskModel from "../model/task";
 import loggerWithNameSpace from "../utils/logger";
 import { BadRequestError } from "../error/BadRequestError";
+import * as userService from "./user";
+import * as taskmodel1 from "../model/TaskModel";
 
 const logger = loggerWithNameSpace("TaskModel");
 
-export const addTask = (newTask: Todo, userId: number) => {
-  const task = taskModel.addTask(newTask, userId);
-  return true;
+export const addTask = async (newTask: Todo, userId: number) => {
+  const existingUser = await userService.getUserById(userId);
+  if (!existingUser) return null;
+  const task = taskmodel1.TaskModel.create(newTask, userId);
+  return task;
 };
 
 export const getTasks = (userId: number) => {

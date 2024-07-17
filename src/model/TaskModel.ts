@@ -3,17 +3,16 @@ import { permissions } from "./../constant/Permission";
 import { getUserByEmail } from "./user";
 import { User } from "../interface/user";
 import { BaseModel } from "./BaseModel";
+import { Todo } from "../interface/task";
 
-export class UserModel extends BaseModel {
-  static async create(user: User) {
-    const password = await bcrypt.hash(user.password, 10);
-    const userToCreate = {
-      name: user.name,
-      email: user.email,
-      password,
+export class TaskModel extends BaseModel {
+  static async create(todo: Todo, id: number) {
+    const todoToCreate = {
+      title: todo.taskName,
+      user_id: id,
     };
     return await this.queryBuilder()
-      .insert(userToCreate)
+      .insert(todoToCreate)
       .table("users")
       .returning("*");
   }
@@ -25,13 +24,6 @@ export class UserModel extends BaseModel {
       .where("email", email)
       .first();
     return result;
-  }
-
-  static async setRole(userId: number, roleId: number) {
-    return await this.queryBuilder()
-      .insert({ user_id: userId, role_id: roleId })
-      .into("user_roles")
-      .returning("*");
   }
 
   static async getById(id: number) {
@@ -56,6 +48,10 @@ export class UserModel extends BaseModel {
       throw error;
     }
   }
+
+  // static async setRole(userId:number){
+
+  // }
 
   static async getRoleName(roleId: number) {
     console.log("roleId", roleId);

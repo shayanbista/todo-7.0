@@ -20,6 +20,8 @@ export const login = async (body: Pick<User, "email" | "password">) => {
     return null;
   }
 
+  console.log("existinguser", existingUser);
+
   const userId = existingUser.id;
 
   const role = await userService.getRoles(userId);
