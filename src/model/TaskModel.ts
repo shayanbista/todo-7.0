@@ -8,30 +8,31 @@ import { Todo } from "../interface/task";
 export class TaskModel extends BaseModel {
   static async create(todo: Todo, id: number) {
     const todoToCreate = {
-      title: todo.taskName,
-      user_id: id,
+      title: todo.title,
+      isCompleted: false,
+      userId: id,
     };
     return await this.queryBuilder()
       .insert(todoToCreate)
-      .table("users")
+      .table("tasks")
       .returning("*");
   }
 
-  static async getByEmail(email: string) {
+  static async getById(id: number) {
+    console.log("userId", id);
     const result = await this.queryBuilder()
       .select("*")
-      .from("users")
-      .where("email", email)
-      .first();
+      .from("tasks")
+      .where("user_id", id);
     return result;
   }
 
-  static async getById(id: number) {
+  static async findById(id: number, userId: number) {
     const result = await this.queryBuilder()
       .select("*")
-      .from("users")
+      .from("tasks")
       .where("id", id)
-      .first();
+      .andWhere("userId", userId);
     return result;
   }
 
@@ -49,80 +50,20 @@ export class TaskModel extends BaseModel {
     }
   }
 
-  // static async setRole(userId:number){
+  static async update(id: number, todo: Todo, userId: number) {
+    let updatedTodo: Todo = todo;
+    console.log("updatedTodo", updatedTodo);
 
-  // }
-
-  static async getRoleName(roleId: number) {
-    console.log("roleId", roleId);
-    const result = await this.queryBuilder()
-      .select("*")
-      .from("roles")
-      .where("id", roleId);
-    return result;
-  }
-  static async getPermissionIds(roleId: number) {
-    console.log("id before role", roleId);
-    const result = await this.queryBuilder()
-      .select("id")
-      .from("role-permissions")
-      .where("role_id", roleId);
-    return result;
-  }
-  static async getPermissionNames(permissionsIds: { id: number }[]) {
-    const permissionIds = permissionsIds.map((item) => item.id);
-    console.log("permussuon id before inserting", permissionIds);
-    const result = await this.queryBuilder()
-      .select("permission")
-      .from("permissions")
-      .whereIn("id", permissionIds);
-
-    console.log("result permission", result);
-
-    return result;
-  }
-
-  static async getRolePermissions(roleId: number) {
-    const permissionsId = await this.queryBuilder()
-      .select("permission_id")
-      .table("role_permissions")
-      .where({ roleId: roleId });
-
-    const permissions = await Promise.all(
-      permissionsId.map(async (permission) => {
-        const result = await this.queryBuilder()
-          .select("permission")
-          .table("permissions")
-          .where({ id: permission.permissionId });
-        return result[0].permission;
-      })
-    );
-    return permissions;
-  }
-
-  static async update(id: number, user: User) {
-    const updateUser: User = user;
-    if (user.name) updateUser.name = user.name;
-    if (user.email) updateUser.email = user.email;
-    if (user.password)
-      updateUser.password = await bcrypt.hash(user.password, 10);
-
-    if (Object.keys(updateUser).length === 0) {
-      throw new Error("No valid fields provided to update");
-    }
-
+    if (todo.title) updatedTodo.title = todo.title;
+    if (todo.isCompleted) updatedTodo.isCompleted = todo.isCompleted;
     return await this.queryBuilder()
-      .update(updateUser)
-      .table("users")
-      .where({ id })
+      .update(updatedTodo)
+      .table("tasks")
+      .where({ id, userId })
       .returning("*");
   }
 
   static async delete(id: number) {
-    return await this.queryBuilder()
-      .delete()
-      .from("users")
-      .where({ id })
-      .returning("*");
+    return await this.queryBuilder().delete().from("tasks").where({ id });
   }
 }

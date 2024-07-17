@@ -17,9 +17,9 @@ import { validateReqBody, validateReqParams } from "../middleware/validator";
 const userRouter = Router();
 userRouter.post(
   "/",
-  // authenticate,
-  // authorize("users.post"),
-  // validateReqBody(createUserBodySchema),
+  authenticate,
+  authorize("users.post"),
+  validateReqBody(createUserBodySchema),
   createUser
 );
 
@@ -40,6 +40,7 @@ userRouter.put(
   validateReqBody(updateUserBodySchema),
   updateUser
 );
+
 userRouter.delete(
   "/:id",
   authenticate,

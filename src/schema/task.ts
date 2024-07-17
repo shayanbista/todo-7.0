@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const createTaskBodySchema = Joi.object({
-  taskName: Joi.string().required().messages({
+  title: Joi.string().required().messages({
     "any.required": "Title must be a string",
   }),
   isCompleted: Joi.boolean().optional().messages({
@@ -10,7 +10,7 @@ export const createTaskBodySchema = Joi.object({
 }).options({ stripUnknown: true });
 
 export const updateTaskBodySchema = Joi.object({
-  taskName: Joi.string().optional().messages({
+  title: Joi.string().optional().messages({
     "any.required": "Title must be a string",
   }),
   isCompleted: Joi.boolean().optional().messages({

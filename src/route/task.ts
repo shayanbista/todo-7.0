@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addTask, updateTask, deleteTask, getTasks } from "../controller/task";
+import { addTask, updateTask, getTasks, deleteTask } from "../controller/task";
 import { authenticate, authorize } from "../middleware/auth";
 import {
   createTaskBodySchema,
