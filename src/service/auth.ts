@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import config from "../config";
 
 import * as userService from "./user";
+import { BadRequestError } from "../error/BadRequestError";
 
 interface CustomJwtPayload {
   email: string;
@@ -66,34 +67,42 @@ export const login = async (body: Pick<User, "email" | "password">) => {
   return { accessToken, refreshToken };
 };
 
-// export const refreshToken = async (token: string) => {
-//   try {
-//     const decoded = verify(token, config.jwt.secret!) as CustomJwtPayload;
+export const refreshToken = async (authToken: string) => {
+  const token = authToken.split(" ");
+  if (token.length !== 2 || token[0] !== "Bearer") {
+    const error = new BadRequestError("No Bearer token provided.");
+    throw error;
+  }
+  let bearerToken = token[1];
 
-//     const existingUser = await userService.getUserByEmail(
-//       decoded.email as string
-//     );
+  try {
+    const decoded = verify(bearerToken, config.jwt.secret!) as CustomJwtPayload;
+    console.log("decodeddata", decoded);
 
-//     if (!existingUser) {
-//       return { error: "Invalid token" };
-//     }
+    const existingUser = await userService.getUserByEmail(
+      decoded.email as string
+    );
 
-//     const payload = {
-//       id: existingUser.id,
-//       name: existingUser.name,
-//       email: existingUser.email,
-//     };
+    if (!existingUser) {
+      return new BadRequestError("no user");
+    }
 
-//     const newAccessToken = sign(payload, config.jwt.secret!, {
-//       expiresIn: config.jwt.accessExpiration,
-//     });
+    const payload = {
+      id: existingUser.id,
+      name: existingUser.name,
+      email: existingUser.email,
+    };
 
-//     const newRefreshToken = sign(payload, config.jwt.secret!, {
-//       expiresIn: config.jwt.refreshTokenExpiration,
-//     });
+    const newAccessToken = sign(payload, config.jwt.secret!, {
+      //   expiresIn: config.jwt.accessExpiration,
+    });
 
-//     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
-//   } catch (err) {
-//     return err;
-//   }
-// };
+    const newRefreshToken = sign(payload, config.jwt.secret!, {
+      //   expiresIn: config.jwt.refreshTokenExpiration,
+    });
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  } catch (err) {
+    return new Error("internal server error");
+  }
+};

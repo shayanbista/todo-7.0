@@ -1,11 +1,8 @@
 import { Iquery } from "./../interface/query";
-import { Query } from "pg";
-import { TaskModel } from "./../model/TaskModel";
-import { NextFunction } from "express";
 import { Todo } from "../interface/task";
 
 import loggerWithNameSpace from "../utils/logger";
-import { BadRequestError } from "../error/BadRequestError";
+
 import * as userService from "./user";
 import * as taskModel1 from "../model/TaskModel";
 

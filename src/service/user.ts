@@ -1,15 +1,8 @@
-import { permissions } from "./../constant/Permission";
 import { User } from "./../interface/user";
-import { UserModel } from "./../model/UserModel";
-import bcrypt from "bcrypt";
-import { Roles } from "../constant/Roles";
+import { Iquery } from "../interface/query";
 
 import loggerWithNameSpace from "../utils/logger";
-import { BadRequestError } from "../error/BadRequestError";
 import * as UserModel1 from "../model/UserModel";
-import { number } from "joi";
-import { Query } from "pg";
-import { Iquery } from "../interface/query";
 
 const logger = loggerWithNameSpace("User Service");
 
@@ -58,7 +51,6 @@ export const getUserByEmail = async (email: string) => {
 
 export const getUserById = async (id: number) => {
   const user = UserModel1.UserModel.getById(id);
-
   return user;
 };
 

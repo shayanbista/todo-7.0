@@ -24,27 +24,15 @@ export const login = async (
   }
 };
 
-// export const refreshToken = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const { authorization } = req.headers;
-
-//   if (authorization) {
-//     const token = authorization.split(" ");
-//     const newToken = await authServices.refreshToken(token[1]);
-
-//     res.status(httpStatusCodes.CREATED).json(newToken);
-//   } else {
-//     next(new BadRequestError("authentication doesnt exist"));
-//   }
-// };
-
-// export const getPermissions = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-
-// };
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    next(new BadRequestError("No token provided."));
+  }
+  const result = await authServices.refreshToken(authorization!);
+  res.status(httpStatusCodes.OK).json(result);
+};
