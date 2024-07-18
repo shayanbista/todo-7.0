@@ -1,14 +1,10 @@
 import { Router } from "express";
-import {
-  getUsers,
-  updateUser,
-  deleteUser,
-  getUserById,
-} from "../controller/user";
+import { updateUser, getUserById, getUsers } from "../controller/user";
 import { authenticate, authorize } from "../middleware/auth";
 import { createUser } from "../controller/user";
 import {
   createUserBodySchema,
+  getUserQuerySchema,
   updateUserBodySchema,
   userIdSchema,
 } from "../schema/user";
@@ -23,7 +19,12 @@ userRouter.post(
   createUser
 );
 
-userRouter.get("/", authenticate, authorize("users.get"), getUsers);
+userRouter.get(
+  "/",
+  authenticate,
+  validateReqParams(getUserQuerySchema),
+  getUsers
+);
 
 userRouter.get(
   "/:id",
@@ -41,12 +42,12 @@ userRouter.put(
   updateUser
 );
 
-userRouter.delete(
-  "/:id",
-  authenticate,
-  authorize("users.delete"),
-  validateReqParams(userIdSchema),
-  deleteUser
-);
+// userRouter.delete(
+//   "/:id",
+//   authenticate,
+//   authorize("users.delete"),
+//   validateReqParams(userIdSchema),
+//   deleteUser
+// );
 
 export default userRouter;

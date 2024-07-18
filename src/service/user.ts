@@ -2,15 +2,21 @@ import { permissions } from "./../constant/Permission";
 import { User } from "./../interface/user";
 import { UserModel } from "./../model/UserModel";
 import bcrypt from "bcrypt";
-import * as userModel from "../model/user";
 import { Roles } from "../constant/Roles";
 
 import loggerWithNameSpace from "../utils/logger";
 import { BadRequestError } from "../error/BadRequestError";
 import * as UserModel1 from "../model/UserModel";
 import { number } from "joi";
+import { Query } from "pg";
+import { Iquery } from "../interface/query";
 
 const logger = loggerWithNameSpace("User Service");
+
+export const getUsers = async (q: Iquery) => {
+  const users = await UserModel1.UserModel.get(q);
+  return users;
+};
 
 export const createUser = async (user: User) => {
   const existingUser = await UserModel1.UserModel.getByEmail(user.email);
@@ -44,13 +50,6 @@ export const getRoles = async (userId: number) => {
 export const getPermissions = async (roleId: number) => {
   const permissions = UserModel1.UserModel.getRolePermissions(roleId);
   return permissions;
-};
-
-export const getUsers = () => {
-  const users = userModel.getUsers();
-  if (users.length == 0) {
-    return null;
-  } else return users;
 };
 
 export const getUserByEmail = async (email: string) => {

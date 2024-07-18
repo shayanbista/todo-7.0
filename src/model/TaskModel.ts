@@ -1,7 +1,3 @@
-import bcrypt from "bcrypt";
-import { permissions } from "./../constant/Permission";
-import { getUserByEmail } from "./user";
-import { User } from "../interface/user";
 import { BaseModel } from "./BaseModel";
 import { Todo } from "../interface/task";
 

@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import { permissions } from "./../constant/Permission";
-import { getUserByEmail } from "./user";
 import { User } from "../interface/user";
 import { BaseModel } from "./BaseModel";
+import { Iquery } from "../interface/query";
 
 export class UserModel extends BaseModel {
   static async create(user: User) {
@@ -16,6 +16,18 @@ export class UserModel extends BaseModel {
       .insert(userToCreate)
       .table("users")
       .returning("*");
+  }
+
+  static async get(query: Iquery) {
+    const result = await this.queryBuilder()
+      .select("*")
+      .table("Users")
+      .limit(query.size!)
+      .offset((query.page! - 1) * query.size!);
+    if (query.q) {
+      result[0].whereLike(`%${query.q}%`);
+    }
+    return result;
   }
 
   static async getByEmail(email: string) {

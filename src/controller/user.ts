@@ -8,12 +8,20 @@ import { BadRequestError } from "../error/BadRequestError";
 
 const logger = loggerWithNameSpace("user controller");
 
-export const getUsers = (req: Request, res: Response, next: NextFunction) => {
-  const users = userService.getUsers();
-  if (!users) {
-    next(new BadRequestError("users dont exist"));
-  } else res.status(httpStatusCodes.OK).json({ message: users });
-};
+export async function getUsers(
+  req: Request<any, any, any, any>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    logger.info("Fetching all users");
+    const { query } = req;
+    res.status(httpStatusCodes.OK).json(await userService.getUsers(query));
+  } catch (e) {
+    logger.error("Error fetching users", { error: e });
+    next(e);
+  }
+}
 
 export const getUserById = async (
   req: Request,
