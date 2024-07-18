@@ -2,7 +2,6 @@ import httpStatusCodes from "http-status-codes";
 import { Request } from "../interface/request";
 import { NextFunction, Response } from "express";
 import * as taskService from "../service/task";
-import { Roles } from "../constant/Roles";
 import { BadRequestError } from "../error/BadRequestError";
 import loggerWithNameSpace from "../utils/logger";
 
@@ -25,8 +24,8 @@ export const getTasks = async (
 ) => {
   const userId = req.user?.id!;
 
-  const tasks = await taskService.getTasks(Number(userId));
-  console.log("tasks11", tasks);
+  const { query } = req;
+  const tasks = await taskService.getTasks(query, Number(userId));
 
   if (!tasks) {
     next(new BadRequestError(`Task with following  id ${userId} doesnt exist`));

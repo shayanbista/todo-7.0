@@ -1,3 +1,4 @@
+import { Iquery } from "./../interface/query";
 import { BaseModel } from "./BaseModel";
 import { Todo } from "../interface/task";
 
@@ -14,12 +15,16 @@ export class TaskModel extends BaseModel {
       .returning("*");
   }
 
-  static async getById(id: number) {
-    console.log("userId", id);
+  static async getById(query: Iquery, id: number) {
     const result = await this.queryBuilder()
       .select("*")
       .from("tasks")
-      .where("user_id", id);
+      .where("user_id", id)
+      .limit(query.size!)
+      .offset((query.page! - 1) * query.size!);
+    if (query.q) {
+      result[0].whereLike(`%${query.q}%`);
+    }
     return result;
   }
 

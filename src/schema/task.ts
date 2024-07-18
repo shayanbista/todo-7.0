@@ -9,6 +9,18 @@ export const createTaskBodySchema = Joi.object({
   }),
 }).options({ stripUnknown: true });
 
+export const getTaskrQuerySchema = Joi.object({
+  q: Joi.string().optional(),
+  page: Joi.number()
+    .min(1)
+    .optional()
+    .messages({
+      "number.base": "Page must be a number",
+      "number.min": "Page must be at least 1",
+    })
+    .default(1),
+});
+
 export const updateTaskBodySchema = Joi.object({
   title: Joi.string().optional().messages({
     "any.required": "Title must be a string",

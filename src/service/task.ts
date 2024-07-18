@@ -1,3 +1,5 @@
+import { Iquery } from "./../interface/query";
+import { Query } from "pg";
 import { TaskModel } from "./../model/TaskModel";
 import { NextFunction } from "express";
 import { Todo } from "../interface/task";
@@ -16,9 +18,8 @@ export const addTask = async (newTask: Todo, userId: number) => {
   return task;
 };
 
-export const getTasks = async (userId: number) => {
-  console.log("userId", userId);
-  const tasks = await taskModel1.TaskModel.getById(userId);
+export const getTasks = async (q: Iquery, userId: number) => {
+  const tasks = await taskModel1.TaskModel.getById(q, userId);
   console.log("returned task", tasks);
   if (!tasks) return null;
   logger.info("Tasks returned");
@@ -47,7 +48,7 @@ export const deleteTask = async (id: number, userId: number) => {
   const task = taskModel1.TaskModel.findById(id, userId);
   if (!task) return null;
   const index = await taskModel1.TaskModel.delete(id);
-  
+
   if (!index) return false;
   return true;
 };
