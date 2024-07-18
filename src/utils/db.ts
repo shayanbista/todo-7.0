@@ -1,7 +1,5 @@
 import { baseKnexConfig } from "../knexfile";
 
-// export default knex(baseKnexConfig);
-
 import knex, { Knex } from "knex";
 import camelize from "camelize";
 import toSnakeCase from "to-snake-case";
