@@ -16,10 +16,6 @@ Create .env file with the help of .env.example to configure the port
 npm start
 ```
 
-## OR
-
-### Docker setup
-
 ### Setup .env file
 
 Create .env file with the help of .env.example to configure the port
