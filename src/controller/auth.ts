@@ -34,5 +34,6 @@ export const refreshToken = async (
     next(new BadRequestError("No token provided."));
   }
   const result = await authServices.refreshToken(authorization!);
+  logger.info("result", result);
   res.status(httpStatusCodes.OK).json(result);
 };

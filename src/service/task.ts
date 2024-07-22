@@ -12,6 +12,7 @@ export const addTask = async (newTask: Todo, userId: number) => {
   const existingUser = await userService.getUserById(userId);
   if (!existingUser) return null;
   const task = taskModel1.TaskModel.create(newTask, userId);
+  logger.info("task added");
   return task;
 };
 
@@ -38,6 +39,7 @@ export const updateTask = async (
     updatedData,
     userId
   );
+  logger.info("task updated");
   return updatedTask;
 };
 
@@ -47,5 +49,6 @@ export const deleteTask = async (id: number, userId: number) => {
   const index = await taskModel1.TaskModel.delete(id);
 
   if (!index) return false;
+  logger.info("task deleted");
   return true;
 };

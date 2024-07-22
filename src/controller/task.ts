@@ -26,6 +26,7 @@ export const getTasks = async (
 
   const { query } = req;
   const tasks = await taskService.getTasks(query, Number(userId));
+  logger.info("tasks", tasks);
 
   if (!tasks) {
     next(new BadRequestError(`Task with following  id ${userId} doesnt exist`));
@@ -50,6 +51,8 @@ export const updateTask = async (
     next(new BadRequestError(`Task with following id: ${id} doesnt exist`));
     return;
   }
+
+  logger.info("task updated");
   res.status(httpStatusCodes.OK).json({ message: "Updated successfully!" });
 };
 
@@ -64,6 +67,7 @@ export const deleteTask = (req: Request, res: Response, next: NextFunction) => {
     next(new BadRequestError(`Task with following id: ${id} doesnt exist`));
     return;
   }
+  logger.info("task deleted");
 
   res.status(httpStatusCodes.OK).json({ message: "deleted successfully!" });
 };

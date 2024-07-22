@@ -6,6 +6,9 @@ import config from "../config";
 
 import * as userService from "./user";
 import { BadRequestError } from "../error/BadRequestError";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("auth service");
 
 interface CustomJwtPayload {
   email: string;
@@ -18,14 +21,14 @@ export const login = async (body: Pick<User, "email" | "password">) => {
   let roleName;
 
   if (!existingUser) {
+    logger.info("null data");
     return null;
   }
-
-  console.log("existinguser", existingUser);
 
   const userId = existingUser.id;
 
   const role = await userService.getRoles(userId);
+  logger.info("null data");
   if (!role) return null;
 
   role.map((items: { id: string; roleName: string }) => {
@@ -34,7 +37,6 @@ export const login = async (body: Pick<User, "email" | "password">) => {
   });
 
   const permissions = await userService.getPermissions(roleId!);
-  console.log("permissions", permissions);
 
   if (!permissions) return null;
 
@@ -44,6 +46,7 @@ export const login = async (body: Pick<User, "email" | "password">) => {
   );
 
   if (!isvalidPassword) {
+    logger.info("null data");
     return null;
   }
   const payload = {
@@ -53,15 +56,14 @@ export const login = async (body: Pick<User, "email" | "password">) => {
     permissions: permissions,
     role: roleName,
   };
+  logger.info("payload", payload);
 
-  console.log("payload", payload);
-
-  const s = config.jwt.secret!;
-  const accessToken = sign(payload, s, {
+  const secretKey = config.jwt.secret!;
+  const accessToken = sign(payload, secretKey, {
     expiresIn: config.jwt.accessExpiration,
   });
 
-  const refreshToken = sign(payload, s, {
+  const refreshToken = sign(payload, secretKey, {
     expiresIn: config.jwt.refreshTokenExpiration,
   });
   return { accessToken, refreshToken };
@@ -77,7 +79,7 @@ export const refreshToken = async (authToken: string) => {
 
   try {
     const decoded = verify(bearerToken, config.jwt.secret!) as CustomJwtPayload;
-    console.log("decodeddata", decoded);
+    logger.info("decoded", decoded);
 
     const existingUser = await userService.getUserByEmail(
       decoded.email as string
@@ -94,11 +96,11 @@ export const refreshToken = async (authToken: string) => {
     };
 
     const newAccessToken = sign(payload, config.jwt.secret!, {
-      //   expiresIn: config.jwt.accessExpiration,
+      expiresIn: config.jwt.accessExpiration,
     });
 
     const newRefreshToken = sign(payload, config.jwt.secret!, {
-      //   expiresIn: config.jwt.refreshTokenExpiration,
+      expiresIn: config.jwt.refreshTokenExpiration,
     });
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
