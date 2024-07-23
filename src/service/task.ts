@@ -44,7 +44,7 @@ export const updateTask = async (
 };
 
 export const deleteTask = async (id: number, userId: number) => {
-  const task = taskModel1.TaskModel.findById(id, userId);
+  const task = await taskModel1.TaskModel.findById(id, userId);
   if (!task) return null;
   const index = await taskModel1.TaskModel.delete(id);
 

@@ -41,7 +41,7 @@ export const getRoles = async (userId: number) => {
 };
 
 export const getPermissions = async (roleId: number) => {
-  const permissions = UserModel1.UserModel.getRolePermissions(roleId);
+  const permissions = await UserModel1.UserModel.getRolePermissions(roleId);
   return permissions;
 };
 
